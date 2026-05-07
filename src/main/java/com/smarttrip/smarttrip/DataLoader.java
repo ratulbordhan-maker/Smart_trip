@@ -6,12 +6,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
+import java.time.LocalDate;
 
 @Configuration
 public class DataLoader {
 
     @Bean
-    @SuppressWarnings("unused")
     public CommandLineRunner initializeSampleData(
             UserRepository userRepository,
             TravelPackageRepository travelPackageRepository,
@@ -20,29 +20,29 @@ public class DataLoader {
             PasswordEncoder passwordEncoder) {
 
         return args -> {
+            System.out.println("🛠️  Initializing Sample Data...");
+
+            // ✅ 1. Clean invalid data safely (Good for re-runs)
             var invalidUsers = userRepository.findAll().stream()
                     .filter(u -> u.getEmail() == null || u.getPassword() == null || u.getRole() == null)
                     .toList();
-            if (!invalidUsers.isEmpty()) {
-                // Delete related bookings and reviews first
-                for (User invalidUser : invalidUsers) {
-                    var bookings = bookingRepository.findByUserId(invalidUser.getId());
-                    bookingRepository.deleteAll(bookings);
-                    var reviews = reviewRepository.findByUser(invalidUser);
-                    reviewRepository.deleteAll(reviews);
-                }
-                userRepository.deleteAll(invalidUsers);
-            }
 
-            User admin = userRepository.findByEmail("admin@smarttrip.com")
-                    .orElseGet(() -> {
-                        User user = new User();
-                        user.setName("Admin");
-                        user.setEmail("admin@smarttrip.com");
-                        user.setPassword(passwordEncoder.encode("admin123"));
-                        user.setRole("ADMIN");
-                        return userRepository.save(user);
-                    });
+            for (User invalidUser : invalidUsers) {
+                bookingRepository.deleteByUserId(invalidUser.getId());
+                reviewRepository.deleteByUserId(invalidUser.getId());
+            }
+            userRepository.deleteAll(invalidUsers);
+
+            // ✅ 2. Create Default Users (Admin, Agency, Traveler)
+            userRepository.findByEmail("admin@smarttrip.com").orElseGet(() -> {
+    User user = new User();
+    user.setName("Admin");
+    user.setEmail("admin@smarttrip.com");
+    user.setPassword(passwordEncoder.encode("admin123"));
+    user.setRole("ADMIN");
+    return userRepository.save(user);
+});
+                    
 
             User agency = userRepository.findByEmail("agency@smarttrip.com")
                     .orElseGet(() -> {
@@ -64,57 +64,54 @@ public class DataLoader {
                         return userRepository.save(user);
                     });
 
+            // ✅ 3. Create Travel Packages
             if (travelPackageRepository.count() == 0) {
-                TravelPackage baliPackage = new TravelPackage();
-                baliPackage.setTitle("Bali Beach Escape");
-                baliPackage.setDescription("7 nights in Bali with seaside villas and guided tours.");
-                baliPackage.setDestination("Bali, Indonesia");
-                baliPackage.setTravelDate("2026-08-05");
-                baliPackage.setPrice(1299.99);
-                baliPackage.setCreatedBy(agency.getId());
-                baliPackage.setTotalSlots(20);
-                baliPackage.setAvailableSlots(14);
-                baliPackage.setActive(true);
-                baliPackage.setCouponCode("BALI2026");
-                baliPackage.setDiscountType("PERCENT");
-                baliPackage.setDiscountValue(10.0);
-                baliPackage.setCouponExpiry("2026-07-01");
+                TravelPackage bali = new TravelPackage();
+                bali.setTitle("Bali Beach Escape");
+                bali.setDescription("7 nights in Bali with seaside villas.");
+                bali.setDestination("Bali");
+                bali.setTravelDate(LocalDate.parse("2026-08-05"));
+                bali.setPrice(1299.99);
+                bali.setCreatedBy(agency.getId());
+                bali.setTotalSlots(20);
+                bali.setAvailableSlots(14);
+                bali.setActive(true);
 
-                TravelPackage parisPackage = new TravelPackage();
-                parisPackage.setTitle("Paris City Lights");
-                parisPackage.setDescription("5 days in Paris with museum passes and Seine dinner cruise.");
-                parisPackage.setDestination("Paris, France");
-                parisPackage.setTravelDate("2026-09-12");
-                parisPackage.setPrice(999.99);
-                parisPackage.setCreatedBy(agency.getId());
-                parisPackage.setTotalSlots(15);
-                parisPackage.setAvailableSlots(8);
-                parisPackage.setActive(true);
-                parisPackage.setCouponCode("PARISFUN");
-                parisPackage.setDiscountType("AMOUNT");
-                parisPackage.setDiscountValue(100.0);
-                parisPackage.setCouponExpiry("2026-08-20");
+                TravelPackage paris = new TravelPackage();
+                paris.setTitle("Paris City Lights");
+                paris.setDescription("5 days in Paris.");
+                paris.setDestination("Paris");
+                paris.setTravelDate(LocalDate.parse("2026-08-05"));
+                paris.setPrice(999.99);
+                paris.setCreatedBy(agency.getId());
+                paris.setTotalSlots(15);
+                paris.setAvailableSlots(8);
+                paris.setActive(true);
 
-                travelPackageRepository.saveAll(List.of(baliPackage, parisPackage));
+                travelPackageRepository.saveAll(List.of(bali, paris));
 
+                // ✅ 4. Create Sample Review
                 if (reviewRepository.count() == 0) {
                     Review review = new Review();
                     review.setRating(5);
-                    review.setComment("Amazing trip! The guides were friendly and the hotel was perfect.");
+                    review.setComment("Amazing trip!");
                     review.setUser(traveler);
-                    review.setTravelPackage(baliPackage);
+                    review.setTravelPackage(bali);
                     reviewRepository.save(review);
                 }
 
+                // ✅ 5. Create Sample Booking
                 if (bookingRepository.count() == 0) {
                     Booking booking = new Booking();
                     booking.setStatus("CONFIRMED");
                     booking.setUser(traveler);
-                    booking.setTravelPackage(baliPackage);
-                    booking.setFinalPrice(1169.99);
+                    booking.setTravelPackage(bali);
+                    booking.setFinalPrice(1299.99);
                     bookingRepository.save(booking);
                 }
             }
+
+            System.out.println("✅ Sample Data loaded successfully!");
         };
     }
 }

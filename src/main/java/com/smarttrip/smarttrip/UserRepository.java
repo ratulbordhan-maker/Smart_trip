@@ -5,7 +5,13 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    Optional<User> findByEmailAndPassword(String email, String password);
+    // ✅ Used for Login
     Optional<User> findByEmail(String email);
 
+    // ✅ Used for Registration (Check if email is already taken)
+    // This is more efficient than findByEmail().isPresent()
+    boolean existsByEmail(String email);
+    
+    // ✅ Find all users by role (Useful for Admin dashboards)
+    java.util.List<User> findByRole(String role);
 }
