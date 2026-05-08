@@ -1,0 +1,449 @@
+/* ═══════════════════════════════════════════════════════
+   src/App.css  —  SmartTrip Design System
+   ═══════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+/* ── 1. Design Tokens ─────────────────────────────────── */
+:root {
+  --primary:      #6366f1;
+  --accent:       #ec4899;
+  --gradient:     linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  --glass:        rgba(255, 255, 255, 0.12);
+  --glass-border: rgba(255, 255, 255, 0.22);
+  --shadow-sm:    0 4px 16px rgba(0,0,0,0.08);
+  --shadow-md:    0 12px 40px rgba(0,0,0,0.12);
+  --shadow-lg:    0 24px 64px rgba(0,0,0,0.18);
+  --radius-sm:    12px;
+  --radius-md:    20px;
+  --radius-lg:    28px;
+  --radius-xl:    36px;
+  --font-head:    'Syne', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+  --sidebar-w:    260px;
+}
+
+/* Role-based themes */
+[data-role="ADMIN"]  { --primary: #4f46e5; --gradient: linear-gradient(135deg, #4f46e5, #7c3aed); }
+[data-role="AGENCY"] { --primary: #db2777; --gradient: linear-gradient(135deg, #db2777, #f472b6); }
+[data-role="USER"]   { --primary: #0f766e; --gradient: linear-gradient(135deg, #0f766e, #14b8a6); }
+
+* { box-sizing: border-box; }
+body { font-family: var(--font-body); -webkit-font-smoothing: antialiased; }
+
+/* ── 2. App Shell ─────────────────────────────────────── */
+.App { height: 100vh; overflow: hidden; }
+
+.main-container {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── 3. Sidebar ───────────────────────────────────────── */
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: #0f0f1a;
+  display: flex;
+  flex-direction: column;
+  padding: 28px 18px;
+  gap: 8px;
+  border-right: 1px solid rgba(255,255,255,0.06);
+  position: relative;
+  overflow: hidden;
+}
+
+.sidebar::before {
+  content: '';
+  position: absolute;
+  top: -80px; left: -60px;
+  width: 260px; height: 260px;
+  background: var(--primary);
+  border-radius: 50%;
+  opacity: 0.12;
+  filter: blur(60px);
+  pointer-events: none;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px 28px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  margin-bottom: 8px;
+}
+
+.brand-icon {
+  font-size: 1.4rem;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.brand-text {
+  font-family: var(--font-head);
+  font-size: 1.2rem;
+  color: rgba(255,255,255,0.9);
+  letter-spacing: -0.02em;
+}
+.brand-text strong { color: white; }
+
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 12px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 12px;
+}
+
+.user-avatar {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: var(--gradient);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-head);
+  font-weight: 700; color: white; font-size: 0.95rem; flex-shrink: 0;
+}
+
+.user-name {
+  font-size: 0.85rem; font-weight: 600; color: rgba(255,255,255,0.9);
+  margin: 0; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.user-role {
+  font-size: 0.72rem; color: rgba(255,255,255,0.4);
+  margin: 0; text-transform: uppercase; letter-spacing: 0.06em;
+}
+
+.sidebar-nav { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+
+.nav-item {
+  width: 100%; text-align: left; padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem; font-weight: 500;
+  color: rgba(255,255,255,0.5);
+  background: none; border: none; cursor: pointer;
+  transition: all 0.18s ease;
+  font-family: var(--font-body); letter-spacing: 0.01em;
+}
+.nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+.nav-item.active {
+  background: var(--gradient); color: white; font-weight: 600;
+  box-shadow: 0 6px 20px rgba(99,102,241,0.35);
+}
+
+.btn-logout {
+  margin-top: auto;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  background: rgba(239,68,68,0.12);
+  color: #f87171;
+  border: 1px solid rgba(239,68,68,0.2);
+  font-size: 0.88rem; font-weight: 600;
+  cursor: pointer; transition: all 0.18s;
+  font-family: var(--font-body); text-align: left;
+  width: 100%;
+}
+.btn-logout:hover { background: rgba(239,68,68,0.22); }
+
+/* ── 4. Main Content ──────────────────────────────────── */
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--gradient);
+  padding: 36px 40px;
+  position: relative;
+}
+
+/* Noise overlay */
+.main-content::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 0;
+}
+
+/* ── 5. Content Area (component root) ────────────────── */
+.content-area {
+  position: relative; z-index: 1;
+  max-width: 1100px; margin: 0 auto; width: 100%;
+}
+
+/* ── 6. Page Headers ──────────────────────────────────── */
+.page-header {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap; gap: 16px; margin-bottom: 32px;
+}
+
+.page-title {
+  font-family: var(--font-head);
+  font-size: 2.6rem; font-weight: 800;
+  color: white; letter-spacing: -0.03em; line-height: 1;
+}
+
+.badge {
+  background: rgba(255,255,255,0.15); color: white;
+  padding: 6px 14px; border-radius: 999px;
+  font-size: 0.8rem; font-weight: 600;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* ── 7. Dashboard Hero ────────────────────────────────── */
+.dashboard-hero {
+  background: var(--glass);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: 52px;
+  margin-bottom: 36px;
+  position: relative; overflow: hidden;
+}
+.dashboard-hero::after {
+  content: '✈';
+  position: absolute; right: 48px; top: 50%;
+  transform: translateY(-50%) rotate(45deg);
+  font-size: 9rem; opacity: 0.06; color: white; pointer-events: none;
+}
+
+/* ── 8. Stat Cards ────────────────────────────────────── */
+.trip-card {
+  background: white;
+  border-radius: var(--radius-lg); padding: 36px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center;
+  box-shadow: var(--shadow-md);
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+.trip-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+
+/* ── 9. Package Grid & Cards ──────────────────────────── */
+.packages-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.package-card {
+  background: white;
+  border-radius: var(--radius-lg); padding: 24px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+  cursor: pointer; overflow: hidden;
+}
+.package-card:hover { box-shadow: var(--shadow-lg); }
+
+/* ── 10. Section Card (forms) ─────────────────────────── */
+.section-card {
+  background: white;
+  border-radius: var(--radius-xl); padding: 44px;
+  box-shadow: var(--shadow-lg);
+}
+
+/* ── 11. Booking Grid & Cards ─────────────────────────── */
+.bookings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 22px;
+}
+
+.booking-card {
+  background: white;
+  border-radius: var(--radius-lg); padding: 28px;
+  box-shadow: var(--shadow-sm);
+  display: flex; flex-direction: column; gap: 20px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.booking-card:hover { box-shadow: var(--shadow-md); }
+
+.booking-card-header {
+  display: flex; justify-content: space-between;
+  align-items: flex-start; gap: 12px;
+}
+
+.booking-title {
+  font-family: var(--font-head); font-size: 1.15rem;
+  font-weight: 700; color: #1e293b; margin: 0 0 4px;
+}
+.booking-destination {
+  font-size: 0.8rem; font-weight: 600; color: #10b981;
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+
+.booking-card-left  { display: flex; align-items: center; gap: 18px; }
+.booking-card-right { display: flex; align-items: center; gap: 16px; }
+
+.booking-icon { padding: 14px; border-radius: var(--radius-sm); flex-shrink: 0; }
+.booking-icon.confirmed { background: #d1fae5; color: #059669; }
+.booking-icon.pending   { background: #fef3c7; color: #d97706; }
+.booking-icon.cancelled { background: #fee2e2; color: #dc2626; }
+
+.booking-meta {
+  display: flex; gap: 14px;
+  font-size: 0.82rem; color: #64748b; font-weight: 500; margin-top: 4px;
+}
+
+.booking-details {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  background: #f8fafc; border-radius: var(--radius-sm); padding: 18px;
+}
+.detail-item  { display: flex; flex-direction: column; gap: 4px; }
+.detail-label { font-size: 0.72rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.07em; }
+.detail-value { font-size: 0.95rem; font-weight: 600; color: #334155; }
+
+.booking-card-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: 16px; border-top: 1px solid #f1f5f9;
+}
+
+/* ── 12. Status Badges ────────────────────────────────── */
+/* FIX: hardcoded — dynamic bg-${color}-100 strings get Tailwind-purged */
+.status-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 6px 14px; border-radius: 999px;
+  font-size: 0.73rem; font-weight: 700;
+  white-space: nowrap; text-transform: uppercase; letter-spacing: 0.05em; flex-shrink: 0;
+}
+.status-confirmed { background: #d1fae5; color: #065f46; }
+.status-pending   { background: #fef3c7; color: #92400e; }
+.status-cancelled { background: #fee2e2; color: #991b1b; }
+
+/* ── 13. Prices ───────────────────────────────────────── */
+.price-label { font-size: 0.72rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.07em; margin: 0; }
+.price-value { font-family: var(--font-head); font-size: 1.7rem; font-weight: 800; color: #1e293b; margin: 0; }
+.booking-price { min-width: 100px; }
+
+/* ── 14. Action Buttons (agency approve/reject) ───────── */
+.action-buttons { display: flex; gap: 8px; }
+
+.action-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 16px; border-radius: var(--radius-sm);
+  font-size: 0.82rem; font-weight: 700;
+  border: none; cursor: pointer; transition: all 0.18s;
+  font-family: var(--font-body);
+}
+.action-btn.approve { background: #d1fae5; color: #065f46; }
+.action-btn.approve:hover { background: #059669; color: white; }
+.action-btn.reject  { background: #fee2e2; color: #991b1b; }
+.action-btn.reject:hover  { background: #dc2626; color: white; }
+
+/* ── 15. Filter Tabs ──────────────────────────────────── */
+.filter-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.filter-tab {
+  padding: 8px 18px; border-radius: 999px;
+  font-size: 0.8rem; font-weight: 600;
+  border: 2px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.75);
+  cursor: pointer; transition: all 0.18s; backdrop-filter: blur(8px);
+  font-family: var(--font-body);
+}
+.filter-tab:hover  { background: rgba(255,255,255,0.22); color: white; }
+.filter-tab.active { background: white; color: #1e293b; border-color: white; }
+
+/* ── 16. Cancel Button ────────────────────────────────── */
+.cancel-btn {
+  padding: 10px 22px; border-radius: var(--radius-sm);
+  background: #fee2e2; color: #dc2626;
+  border: none; font-size: 0.85rem; font-weight: 700;
+  cursor: pointer; transition: all 0.18s; font-family: var(--font-body);
+}
+.cancel-btn:hover { background: #dc2626; color: white; }
+
+/* ── 17. User Table ───────────────────────────────────── */
+.user-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+.user-table thead tr { background: #f8fafc; }
+.user-table th {
+  padding: 14px 18px; text-align: left;
+  font-size: 0.72rem; font-weight: 700; color: #94a3b8;
+  text-transform: uppercase; letter-spacing: 0.07em;
+}
+.user-table td { padding: 14px 18px; border-top: 1px solid #f1f5f9; color: #334155; }
+
+.row-num { color: #94a3b8; font-size: 0.78rem; width: 40px; }
+
+.user-name-cell { display: flex; align-items: center; gap: 12px; font-weight: 600; }
+
+.table-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--gradient); color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem; font-weight: 700; flex-shrink: 0;
+}
+
+.role-badge { padding: 4px 12px; border-radius: 999px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+.role-badge.admin  { background: #ede9fe; color: #6d28d9; }
+.role-badge.agency { background: #fce7f3; color: #be185d; }
+.role-badge.user   { background: #d1fae5; color: #065f46; }
+
+.delete-btn {
+  padding: 6px 14px; border-radius: 8px;
+  background: #fee2e2; color: #dc2626;
+  border: none; font-size: 0.8rem; font-weight: 700;
+  cursor: pointer; transition: all 0.18s; font-family: var(--font-body);
+}
+.delete-btn:hover { background: #dc2626; color: white; }
+
+/* ── 18. Forms ────────────────────────────────────────── */
+.form-group { display: flex; flex-direction: column; gap: 8px; }
+.form-group label {
+  font-size: 0.8rem; font-weight: 700; color: #64748b;
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+
+.form-input {
+  width: 100%; padding: 14px 18px;
+  border: 2px solid #e2e8f0; border-radius: var(--radius-md);
+  font-size: 0.95rem; font-family: var(--font-body);
+  transition: all 0.2s ease; box-sizing: border-box;
+  background: white; color: #1e293b;
+}
+.form-input:focus {
+  outline: none; border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(99,102,241,0.1);
+}
+.form-input::placeholder { color: #94a3b8; }
+
+/* ── 19. Primary Button ───────────────────────────────── */
+.btn {
+  display: block; width: 100%;
+  background: var(--gradient); color: white;
+  padding: 15px 28px; border-radius: var(--radius-md);
+  font-family: var(--font-body); font-size: 1rem; font-weight: 700;
+  border: none; cursor: pointer; box-sizing: border-box;
+  text-align: center; transition: all 0.22s ease; letter-spacing: 0.01em;
+}
+.btn:hover:not(:disabled)  { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 12px 32px rgba(99,102,241,0.35); }
+.btn:active:not(:disabled) { transform: translateY(0); }
+.btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+/* ── 20. Empty State ──────────────────────────────────── */
+.empty-state {
+  background: var(--glass); backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: 80px 40px; text-align: center; color: white;
+}
+.empty-state h2 { font-family: var(--font-head); font-size: 1.6rem; font-weight: 700; margin: 16px 0 8px; }
+.empty-state p  { color: rgba(255,255,255,0.6); font-size: 0.95rem; margin: 0; }
+.empty-icon     { font-size: 4rem; margin-bottom: 8px; opacity: 0.5; display: block; }
+
+/* ── 21. Spinner ──────────────────────────────────────── */
+.loading-spinner {
+  width: 40px; height: 40px;
+  border: 3px solid rgba(255,255,255,0.2);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── 22. Utilities ────────────────────────────────────── */
+.text-primary { color: var(--primary); }

@@ -19,21 +19,11 @@ public class ReviewController {
     @Autowired
     private TravelPackageRepository travelPackageRepository;
 
-    // ✅ Add review
+    // add review
     @PostMapping
     public Review addReview(@RequestBody Review review) {
-
-        if (review.getUser() == null || review.getUser().getId() == null) {
-            throw new RuntimeException("User ID required");
-        }
-
-        if (review.getTravelPackage() == null || review.getTravelPackage().getId() == null) {
-            throw new RuntimeException("Package ID required");
-        }
-
         User user = userRepository.findById(review.getUser().getId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
         TravelPackage travelPackage = travelPackageRepository.findById(review.getTravelPackage().getId())
                 .orElseThrow(() -> new RuntimeException("Package not found"));
 
@@ -43,7 +33,7 @@ public class ReviewController {
         return reviewRepository.save(review);
     }
 
-    // ✅ Get reviews
+    // get reviews by package
     @GetMapping("/package/{id}")
     public List<Review> getReviews(@PathVariable Long id) {
         return reviewRepository.findByTravelPackageId(id);

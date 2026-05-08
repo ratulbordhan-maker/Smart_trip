@@ -1,91 +1,154 @@
 package com.smarttrip.smarttrip;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import java.time.LocalDate;
+
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "travel_package")
+@JsonIgnoreProperties({"reviews"})
 public class TravelPackage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false)
-    private String title;
-
     private String description;
-    private LocalDate travelDate;
+    private String travelDate;
+    private String title;
     private String destination;
-
-    @Column(nullable = false)
     private double price;
-
-    private Long createdBy;
-
+    private Long createdBy; // agency id
     private int availableSlots;
     private int totalSlots;
-
     private boolean active = true;
-
     private String couponCode;
     private double discountValue;
     private String discountType;
     private String couponExpiry;
 
-    @OneToMany(mappedBy = "travelPackage", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "travelPackage", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Review> reviews = new ArrayList<>();
 
-    // Default Constructor
-    public TravelPackage() {}
+    // Getters
+    public Long getId() {
+        return id;
+    }
 
-    // Getters & Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public String getDescription() {
+        return description;
+    }
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    public String getTravelDate() {
+        return travelDate;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public String getTitle() {
+        return title;
+    }
 
-    public LocalDate getTravelDate() { return travelDate; }
-    public void setTravelDate(LocalDate travelDate) { this.travelDate = travelDate; }
+    public String getDestination() {
+        return destination;
+    }
 
-    public String getDestination() { return destination; }
-    public void setDestination(String destination) { this.destination = destination; }
+    public double getPrice() {
+        return price;
+    }
 
-    public double getPrice() { return price; }
-    public void setPrice(double price) { this.price = price; }
+    public Long getCreatedBy() {
+        return createdBy;
+    }
 
-    public Long getCreatedBy() { return createdBy; }
-    public void setCreatedBy(Long createdBy) { this.createdBy = createdBy; }
+    public int getAvailableSlots() {
+        return availableSlots;
+    }
 
-    public int getAvailableSlots() { return availableSlots; }
-    public void setAvailableSlots(int availableSlots) { this.availableSlots = availableSlots; }
+    public int getTotalSlots() {
+        return totalSlots;
+    }
 
-    public int getTotalSlots() { return totalSlots; }
-    public void setTotalSlots(int totalSlots) { this.totalSlots = totalSlots; }
+    public boolean isActive() {
+        return active;
+    }
 
-    public boolean isActive() { return active; }
-    public void setActive(boolean active) { this.active = active; }
+    public String getCouponCode() {
+        return couponCode;
+    }
 
-    public String getCouponCode() { return couponCode; }
-    public void setCouponCode(String couponCode) { this.couponCode = couponCode; }
+    public double getDiscountValue() {
+        return discountValue;
+    }
 
-    public double getDiscountValue() { return discountValue; }
-    public void setDiscountValue(double discountValue) { this.discountValue = discountValue; }
+    public String getDiscountType() {
+        return discountType;
+    }
 
-    public String getDiscountType() { return discountType; }
-    public void setDiscountType(String discountType) { this.discountType = discountType; }
+    public String getCouponExpiry() {
+        return couponExpiry;
+    }
 
-    public String getCouponExpiry() { return couponExpiry; }
-    public void setCouponExpiry(String couponExpiry) { this.couponExpiry = couponExpiry; }
+    public List<Review> getReviews() {
+        return reviews;
+    }
 
-    public List<Review> getReviews() { return reviews; }
-    public void setReviews(List<Review> reviews) { this.reviews = reviews; }
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
+    }
+
+    // Setters
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setTravelDate(String travelDate) {
+        this.travelDate = travelDate;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setDestination(String destination) {
+        this.destination = destination;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public void setAvailableSlots(int availableSlots) {
+        this.availableSlots = availableSlots;
+    }
+
+    public void setTotalSlots(int totalSlots) {
+        this.totalSlots = totalSlots;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public void setCouponCode(String couponCode) {
+        this.couponCode = couponCode;
+    }
+
+    public void setDiscountValue(double discountValue) {
+        this.discountValue = discountValue;
+    }
+
+    public void setDiscountType(String discountType) {
+        this.discountType = discountType;
+    }
+
+    public void setCouponExpiry(String couponExpiry) {
+        this.couponExpiry = couponExpiry;
+    }
 }

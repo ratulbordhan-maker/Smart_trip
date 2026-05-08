@@ -6,10 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class SmarttripApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(SmarttripApplication.class, args);
-        System.out.println("🚀 SmartTrip Backend is running on http://localhost:8080");
-    }
+	public static void main(String[] args) {
+		SpringApplication.run(SmarttripApplication.class, args);
+	}
 
 }
-
