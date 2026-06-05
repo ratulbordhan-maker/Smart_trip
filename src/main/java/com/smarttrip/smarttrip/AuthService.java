@@ -17,11 +17,13 @@ public class AuthService {
     private JwtUtil jwtUtil;
 
     public AuthResponse login(LoginRequest request) {
-        User user = userRepository.findByEmail(request.getEmail());
-        
-        if (user == null) {
+        java.util.Optional<User> userOpt = userRepository.findByEmail(request.getEmail());
+
+        if (userOpt.isEmpty()) {
             return new AuthResponse(false, "User not found", null, null, null);
         }
+
+        User user = userOpt.get();
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             return new AuthResponse(false, "Invalid password", null, null, null);
@@ -42,8 +44,8 @@ public class AuthService {
 
     public AuthResponse register(RegisterRequest request) {
         // Check if user already exists
-        User existingUser = userRepository.findByEmail(request.getEmail());
-        if (existingUser != null) {
+        java.util.Optional<User> existingUserOpt = userRepository.findByEmail(request.getEmail());
+        if (existingUserOpt.isPresent()) {
             return new AuthResponse(false, "Email already registered", null, null, null);
         }
 
@@ -75,11 +77,12 @@ public class AuthService {
         }
 
         String email = jwtUtil.getEmailFromToken(refreshToken);
-        User user = userRepository.findByEmail(email);
-
-        if (user == null) {
+        java.util.Optional<User> userOpt = userRepository.findByEmail(email);
+        if (userOpt.isEmpty()) {
             return new AuthResponse(false, "User not found", null, null, null);
         }
+
+        User user = userOpt.get();
 
         String newToken = jwtUtil.generateToken(user);
         String newRefreshToken = jwtUtil.generateRefreshToken(user);
