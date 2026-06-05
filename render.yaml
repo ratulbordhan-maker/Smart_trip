@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: smarttrip-backend
+    env: java
+    plan: free
+    branch: main
+    root: .
+    buildCommand: bash -lc "chmod +x mvnw && ./mvnw clean package -DskipTests"
+    startCommand: bash -lc "java -Dserver.port=$PORT -jar target/*.jar"
+    autoDeploy: true
