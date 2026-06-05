@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: smarttrip-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: smarttrip
+      MYSQL_USER: smarttrip
+      MYSQL_PASSWORD: ${DB_PASSWORD:-smarttrip_password_123}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+    networks:
+      - smarttrip-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: smarttrip-backend
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_URL: jdbc:mysql://mysql:3306/smarttrip
+      DB_USER: smarttrip
+      DB_PASSWORD: ${DB_PASSWORD:-smarttrip_password_123}
+      JWT_SECRET: ${JWT_SECRET:-your-production-secret-key-min-32-chars-long}
+      JWT_EXPIRATION: 86400000
+      JWT_REFRESH_EXPIRATION: 604800000
+      APP_FRONTEND_URL: ${APP_FRONTEND_URL:-http://localhost:3000}
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./logs:/var/log/smarttrip
+    networks:
+      - smarttrip-network
+    restart: unless-stopped
+
+  frontend:
+    image: node:18-alpine
+    container_name: smarttrip-frontend
+    working_dir: /app
+    volumes:
+      - ./smarttrip-frontend:/app
+    environment:
+      REACT_APP_API_URL: ${REACT_APP_API_URL:-http://localhost:8080}
+    ports:
+      - "3000:3000"
+    command: sh -c "npm install && npm start"
+    networks:
+      - smarttrip-network
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+
+networks:
+  smarttrip-network:
+    driver: bridge
